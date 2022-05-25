@@ -3,6 +3,9 @@ package it.polito.tdp.PremierLeague.model;
 public class Player {
 	Integer playerID;
 	String name;
+	double eff;
+	Match match;
+	double deltaP;
 	
 	public Player(Integer playerID, String name) {
 		super();
@@ -21,6 +24,30 @@ public class Player {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public double getEff() {
+		return eff;
+	}
+
+	public void setEff(double eff) {
+		this.eff = eff;
+	}
+
+	public double getDeltaP() {
+		return deltaP;
+	}
+
+	public void setDeltaP(double deltaP) {
+		this.deltaP = deltaP;
+	}
+
+	public Match getMatch() {
+		return match;
+	}
+
+	public void setMatch(Match match) {
+		this.match = match;
 	}
 
 	@Override

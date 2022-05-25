@@ -6,10 +6,12 @@
 package it.polito.tdp.PremierLeague;
 
 import java.net.URL;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.PremierLeague.model.Match;
 import it.polito.tdp.PremierLeague.model.Model;
+import it.polito.tdp.PremierLeague.model.Player;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,7 +20,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class FXMLController {
-
+	private boolean entrato = false;
 	private Model model;
 
     @FXML // ResourceBundle that was given to the FXMLLoader
@@ -47,17 +49,42 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-    	
+    	entrato = true;
+    	Match match = cmbMatch.getValue();
+    	txtResult.clear();
+    	if(match != null) {
+    		model.creaGrafo(match);
+    		txtResult.appendText("Numero vertici: " + model.nVertici());
+    		txtResult.appendText("\nNumero archi: " + model.nArchi());
+    	}
+    	else {
+    		txtResult.setText("Selezionare un match");
+    	}
     }
 
     @FXML
     void doGiocatoreMigliore(ActionEvent event) {    	
-    	
+    	txtResult.clear();
+    	Player player = model.getGiocatoreMigliore();
+    	if(entrato) {
+    		txtResult.appendText("Giocatore migliore: \n" + player + ", delta efficienza: " + player.getDeltaP());
+    	}
+    	else {
+    		txtResult.setText("Prima creare il grafo");
+    	}
     }
     
     @FXML
     void doSimula(ActionEvent event) {
-
+    	txtResult.clear();
+    	String numString = txtN.getText();
+    	try {
+			int num = Integer.parseInt(numString);
+			txtResult.appendText(model.simula(num, cmbMatch.getValue()).toString());
+		} catch (Exception e) {
+			throw e;
+		}
+    	
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -73,5 +100,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	cmbMatch.getItems().addAll(model.getMatchs());
     }
 }
