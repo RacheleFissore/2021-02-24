@@ -26,7 +26,7 @@ public class Simulazione {
 		team2 = -1;
 		numGBest = 0;
 		numG2 = 0;
-		teamBest = model.teamIDPlayerBest(best);
+		//teamBest = model.teamIDPlayerBest(best);
 		match = m;
 		N = num;
 		

@@ -54,8 +54,8 @@ public class FXMLController {
     	txtResult.clear();
     	if(match != null) {
     		model.creaGrafo(match);
-    		txtResult.appendText("Numero vertici: " + model.nVertici());
-    		txtResult.appendText("\nNumero archi: " + model.nArchi());
+    		txtResult.appendText("Numero vertici: " + model.getNVertici());
+    		txtResult.appendText("\nNumero archi: " + model.getNArchi());
     	}
     	else {
     		txtResult.setText("Selezionare un match");
@@ -65,9 +65,8 @@ public class FXMLController {
     @FXML
     void doGiocatoreMigliore(ActionEvent event) {    	
     	txtResult.clear();
-    	Player player = model.getGiocatoreMigliore();
     	if(entrato) {
-    		txtResult.appendText("Giocatore migliore: \n" + player + ", delta efficienza: " + player.getDeltaP());
+    		txtResult.appendText("Giocatore migliore: \n" + model.getGiocatoreMigliore());
     	}
     	else {
     		txtResult.setText("Prima creare il grafo");
@@ -76,14 +75,6 @@ public class FXMLController {
     
     @FXML
     void doSimula(ActionEvent event) {
-    	txtResult.clear();
-    	String numString = txtN.getText();
-    	try {
-			int num = Integer.parseInt(numString);
-			txtResult.appendText(model.simula(num, cmbMatch.getValue()).toString());
-		} catch (Exception e) {
-			throw e;
-		}
     	
     }
 

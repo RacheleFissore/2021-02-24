@@ -114,12 +114,11 @@ public class PremierLeagueDAO {
 		}
 	}
 	
-	public List<Integer> getIdPlayerVertici(Match m) {
+	public List<Player> getVertici(Map<Integer, Player> idMap, Match m) {
 		String sql = "SELECT PlayerID "
 				+ "FROM actions "
-				+ "WHERE MatchID = ?";
-		
-		List<Integer> result = new ArrayList<Integer>();
+				+ "WHERE MatchID=?";
+		List<Player> result = new ArrayList<Player>();
 		Connection conn = DBConnect.getConnection();
 
 		try {
@@ -127,9 +126,9 @@ public class PremierLeagueDAO {
 			st.setInt(1, m.getMatchID());
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
-				
-				result.add(res.getInt("PlayerID"));
 
+				Player player = idMap.get(res.getInt("PlayerID"));
+				result.add(player);
 			}
 			conn.close();
 			return result;
@@ -140,50 +139,31 @@ public class PremierLeagueDAO {
 		}
 	}
 	
-	public void setEfficienzaPlayer(Match m, Map<Integer, Player> idMap) {
-		String sql = "SELECT PlayerID, MatchID, ((TotalSuccessfulPassesAll+Assists)/TimePlayed) AS eff "
-				+ "FROM actions "
-				+ "WHERE MatchID = ?";
-		
-		Connection conn = DBConnect.getConnection();
-
-		try {
-			PreparedStatement st = conn.prepareStatement(sql);
-			st.setInt(1, m.getMatchID());
-			ResultSet res = st.executeQuery();
-			while (res.next()) {	
-				Player p = idMap.get(res.getInt("PlayerID"));
-				p.setEff(res.getDouble("eff"));
-				p.setMatch(m);
-			}
-			conn.close();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public List<Adiacenza> getAdiacenzas(Match m, Map<Integer, Player> idMap) {
-		String sql = "SELECT a1.PlayerID AS p1, a2.PlayerID AS p2 "
+	public List<Adiacenza> getArchi(Map<Integer, Player> idMap, Match m) {
+		String sql = "SELECT a1.PlayerID AS p1, a2.PlayerID AS p2, (((a1.TotalSuccessfulPassesAll+a1.Assists)/a1.TimePlayed)-((a2.TotalSuccessfulPassesAll+a2.Assists)/a2.TimePlayed)) AS peso "
 				+ "FROM actions AS a1, actions AS a2 "
-				+ "WHERE a1.MatchID = ? "
+				+ "WHERE a1.MatchID=? "
 				+ "AND a1.MatchID = a2.MatchID "
 				+ "AND a1.PlayerID > a2.PlayerID "
-				+ "AND a1.TeamID <> a2.TeamID";
+				+ "AND a1.TeamID <> a2.TeamID "
+				+ "GROUP BY a1.PlayerID, a2.PlayerID";
 		
-		List<Adiacenza> result = new ArrayList<>();
+		List<Adiacenza> result = new ArrayList<Adiacenza>();
 		Connection conn = DBConnect.getConnection();
-		
+
 		try {
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setInt(1, m.getMatchID());
 			ResultSet res = st.executeQuery();
-			while (res.next()) {				
-				Player p1 = idMap.get(res.getInt("p1"));
-				Player p2 = idMap.get(res.getInt("p2"));
-				
-				
-				result.add(new Adiacenza(p1, p2));
+			while (res.next()) {
+
+				Player player1 = idMap.get(res.getInt("p1"));
+				Player player2 = idMap.get(res.getInt("p2"));
+				/*double peso = 0.0;
+				if(res.getDouble("peso") < 0) {
+					peso = -1*res.getDouble("peso");
+				}*/
+				result.add(new Adiacenza(player1, player2, res.getDouble("peso")));
 			}
 			conn.close();
 			return result;
@@ -194,24 +174,5 @@ public class PremierLeagueDAO {
 		}
 	}
 	
-	public Integer getTeamID(Player best) {
-		String sql = "SELECT distinct TeamID "
-				+ "FROM actions "
-				+ "WHERE PlayerID = ?";
-		
-		Connection conn = DBConnect.getConnection();
-		
-		try {
-			PreparedStatement st = conn.prepareStatement(sql);
-			st.setInt(1, best.getPlayerID());
-			ResultSet res = st.executeQuery();
-			res.first();
-			int team = res.getInt("TeamID");
-			return team;
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return -1;
-		}
-	}
+	
 }

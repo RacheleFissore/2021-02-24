@@ -5,10 +5,11 @@ public class Adiacenza {
 	Player p2;
 	double peso;
 	
-	public Adiacenza(Player p1, Player p2) {
+	public Adiacenza(Player p1, Player p2, double peso) {
 		super();
 		this.p1 = p1;
 		this.p2 = p2;
+		this.peso = peso;
 	}
 	
 	public Player getP1() {
