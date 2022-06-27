@@ -70,6 +70,8 @@ public class Model {
 				if(!grafo.containsEdge(p2, p1))
 					Graphs.addEdgeWithVertices(grafo, p2, p1, peso);
 			}
+			
+			System.out.println(peso + "\n");
 		}		
 	}
 	
